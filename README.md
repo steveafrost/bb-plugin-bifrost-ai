@@ -9,7 +9,7 @@ Codex, so the work runs on your own routing policy and keys.
 ```
 bb plugin install .                  # installs and builds
 bb plugin config bifrost-ai set apiKey <virtual key>
-bb plugin config bifrost-ai set model deepseek-v4.1-flash
+bb plugin config bifrost-ai set model zai/glm-5.3-flash
 bb settings ai-services set thread-title bifrost
 bb settings ai-services set commit-message bifrost
 bb settings ai-services test thread-title
@@ -23,16 +23,21 @@ bb settings ai-services test thread-title
 | Key | Default | Meaning |
 | - | - | - |
 | `baseUrl` | `http://127.0.0.1:8090` | Gateway base URL, without `/v1`. |
-| `model` | `deepseek-v4.1-flash` | Model or alias passed to Bifrost. |
+| `model` | `zai/glm-5.3-flash` | Model or alias passed to Bifrost. |
 | `apiKey` | unset | Bifrost virtual key, sent as `x-bf-vk`. |
 
 ## Operating notes
 
-- bb aborts a text task after 5 seconds. The plugin caps each request at 4.5s
-  and throws, so a slow model shows as a failed title rather than a hang.
-- Measured on this host: `deepseek-v4.1-flash` answers a title in 0.3-0.6s.
-  Bifrost's `auto` alias routes through Vercel Token Pass and takes 2-4.5s per
-  title, which loses titles intermittently against the 5s budget.
+- bb aborts a title or commit message after 8 seconds (`AI_TASK_TIMEOUT_MS`).
+  The plugin caps each request at 7s and throws, so a slow model shows as a
+  failed title rather than a hang.
+- Measured on this host, titles including bb's own prompt overhead:
+  `deepseek-v4.1-flash` 0.6-0.7s, `zai/glm-5.3-flash` 1.5-2.4s, `zai/glm-5.3`
+  1.9-2.2s, `auto` 2-4.5s.
+- A model must appear in the provider key's `models` list in Bifrost or the
+  request fails with `403 model_blocked` before reaching the provider. Adding
+  `zai/glm-5.3-flash` to `vercel-token-pass`'s key was required; the sibling
+  `zai/glm-5.3` was already listed.
 - Use `max_tokens` above the model's thinking budget. A cap of 32 returned
   empty content with `finish_reason: "length"` on DeepSeek V4.1 Flash.
 - `antigravity/*` models reject chat completions from this key with HTTP 400;

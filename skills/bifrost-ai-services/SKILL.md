@@ -22,8 +22,9 @@ gateway's `/v1/chat/completions`.
 
 - Pick the service per task: `bb settings ai-services set thread-title bifrost`
   and `commit-message bifrost`; `automatic` and `off` are the other choices.
-- Change the model: `bb plugin config bifrost-ai set model deepseek-v4.1-flash`.
-  Bare aliases and full `provider/model` ids both work.
+- Change the model: `bb plugin config bifrost-ai set model zai/glm-5.3-flash`.
+  Bare aliases and full `provider/model` ids both work, but Bifrost rejects with
+  `403 model_blocked` any model the provider key does not list in `config.json`.
 - Rotate the key: `bb plugin config bifrost-ai set apiKey <key>`, then
   `bb plugin reload bifrost-ai`.
 - Sample it: `bb settings ai-services test thread-title` and
@@ -31,5 +32,6 @@ gateway's `/v1/chat/completions`.
 
 ## Limits
 
-bb aborts a title or commit message after 5 seconds. Keep the model fast;
-`auto` on this host takes 2-4.5s and times out intermittently.
+bb aborts a title or commit message after 8 seconds; the plugin caps at 7s.
+Keep the model fast: `auto` on this host takes 2-4.5s and times out
+intermittently, `zai/glm-5.3-flash` 1.5-2.4s, `deepseek-v4.1-flash` 0.6-0.7s.

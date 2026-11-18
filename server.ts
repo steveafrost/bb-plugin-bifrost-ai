@@ -8,8 +8,8 @@
 // or in Settings → AI services.
 import type { BbPluginApi, PluginAiServiceDeclaration } from "@get-bb/plugin-sdk";
 
-/** bb aborts `complete` after 5s; finish before that with room to clean up. */
-const REQUEST_TIMEOUT_MS = 4_500;
+/** bb aborts a text task after 8s; finish before that with room to clean up. */
+const REQUEST_TIMEOUT_MS = 7_000;
 
 type CompleteArgs = {
   baseUrl: string;
@@ -78,8 +78,8 @@ export default async function plugin(bb: BbPluginApi) {
       type: "string",
       label: "Model",
       description:
-        "Model or gateway alias for titles and commit messages. Bifrost accepts a bare alias (`deepseek-v4.1-flash`) or a full id (`vercel-token-pass/deepseek/deepseek-v4.1-flash`). `auto` also works but costs 2-4s per title, close to bb's 5s budget.",
-      default: "deepseek-v4.1-flash",
+        "Model or gateway alias for titles and commit messages. Bifrost accepts a bare alias (`zai/glm-5.3-flash`) or a full id (`vercel-token-pass/zai/glm-5.3-flash`). A model its provider key does not list in Bifrost is rejected with 403 model_blocked.",
+      default: "zai/glm-5.3-flash",
     },
     apiKey: {
       type: "string",
@@ -100,7 +100,7 @@ export default async function plugin(bb: BbPluginApi) {
       return complete({
         baseUrl: normalizeBaseUrl(current.baseUrl.trim() || "http://127.0.0.1:8090"),
         apiKey,
-        model: current.model.trim() || "deepseek-v4.1-flash",
+        model: current.model.trim() || "zai/glm-5.3-flash",
         prompt,
         signal,
       });
