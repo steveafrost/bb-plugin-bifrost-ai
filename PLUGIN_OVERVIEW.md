@@ -37,10 +37,10 @@ under a second while an `auto` alias can take four.
 
 ## Settings
 
-| Setting | Meaning |
-| --- | --- |
-| Bifrost URL | Gateway base URL, without `/v1`. Defaults to `http://127.0.0.1:8090`. |
-| Model | Model or alias sent to the gateway. Defaults to `deepseek-v4.1-flash`. |
-| Virtual key | Bifrost virtual key, stored as a server-side secret. |
+- **Bifrost URL** is the gateway base URL without `/v1`, defaulting to
+  `http://127.0.0.1:8090`.
+- **Model** is the model or alias sent to the gateway, defaulting to
+  `deepseek-v4.1-flash`.
+- **Virtual key** is the Bifrost key, stored as a server-side secret.
 
 Voice input is not offered; only thread titles and commit messages.
